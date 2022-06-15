@@ -9,8 +9,14 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="servers.php">Servers</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="all-sites.php">Sites</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        sites
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="all-sites.php?table">tableau</a></li>
+                        <li><a class="dropdown-item" href="all-sites.php">liste</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
