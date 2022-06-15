@@ -20,6 +20,9 @@ $servers = $query->fetchAll(PDO::FETCH_OBJ);
 </head>
 
 <body>
+
+    <?php include("navbar.php"); ?>
+
     <div class="container py-5">
         <div class="card">
             <div class="card-header">
@@ -32,7 +35,8 @@ $servers = $query->fetchAll(PDO::FETCH_OBJ);
                     <div class="col-md-3">Utilisateur</div>
                     <div class="col-md-3">Mot de passe</div>
                     <div class="col-md-2">Actions</div>
-                </div><hr>
+                </div>
+                <hr>
                 <?php foreach ($servers as $server) { ?>
                     <div class="row py-2">
                         <div class="col-md-2"><?= $server->name; ?></div>
@@ -41,6 +45,7 @@ $servers = $query->fetchAll(PDO::FETCH_OBJ);
                         <div class="col-md-3"><?= htmlentities($server->password); ?></div>
                         <div class="col-md-2">
                             <a href="list-sites.php?server=<?= $server->id; ?>&name=<?= $server->name; ?>" class="btn btn-outline-primary">Sites</a>
+                            <a href="parse-server.php?server=<?= $server->id; ?>" class="btn btn-outline-warning">Actualiser</a>
                         </div>
                     </div>
                 <?php } ?>

@@ -2,7 +2,7 @@
 
 include("index.php");
 
-if(!isset($_GET["server"])) header("Location: servers.php");
+if (!isset($_GET["server"])) header("Location: servers.php");
 
 $id = $_GET["server"];
 $serverName = $_GET["name"];
@@ -26,6 +26,9 @@ $sites = $query->fetchAll(PDO::FETCH_OBJ);
 </head>
 
 <body>
+
+    <?php include("navbar.php"); ?>
+
     <div class="container py-5">
         <div class="card">
             <div class="card-header">
@@ -33,7 +36,8 @@ $sites = $query->fetchAll(PDO::FETCH_OBJ);
             </div>
             <div class="card-body">
                 <a href="servers.php" class="btn btn-outline-primary">Retour</a><br><br>
-                <p>Sites :</p><hr>
+                <p>Sites :</p>
+                <hr>
                 <?php foreach ($sites as $site) { ?>
                     <div class="py-2">
                         <?= $site->url ?>

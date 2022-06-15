@@ -1,5 +1,7 @@
 <?php
 
+include("index.php");
+
 use League\Flysystem\Filesystem;
 use League\Flysystem\PhpseclibV2\SftpAdapter;
 use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
@@ -16,8 +18,6 @@ $update = strtotime($lastUpdate->date);
 $now = strtotime(date("Y-m-d"));
 
 $update = (abs($update - $now)/(60*60*24) > 7) ? true : false;
-
-dd($update);
 
 // Si la dernière MAJ est plus ancienne que 1 semaine
 if ($update) {
@@ -74,4 +74,11 @@ if ($update) {
             }
         }
     }
+
+    $sql = "INSERT INTO updates VALUES (NULL, NOW())";
+    $query = $dbh->prepare($sql);
+    $query->execute();
+} else {
+    $message = base64_encode("Les servers on déja été actualisés récemmentw");
+    header("location: servers.php?message=$message");
 }
