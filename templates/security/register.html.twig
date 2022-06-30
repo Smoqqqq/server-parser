@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+
+{% block content %}
+
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3">
+
+				<h1>S'inscrire</h1>
+				<hr>
+				<p>Créez un compte utilisateur.</p>
+				<p>Une fois votre compte crée, vous devrez être assigné à des groupes pour avoir accès au serveurs et sites.</p>
+
+				{{ form_start(form) }}
+
+				{{ form_row(form.email) }}
+				{{ form_row(form.password) }}
+
+				<button class="btn btn-primary float-end mt-4" type="submit">
+					S'inscrire
+				</button>
+
+				{{ form_end(form) }}
+
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}

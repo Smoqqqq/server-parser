@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ServersController!
+{% endblock %}
+
+{% block content %}
+	<h1>Liste des serveurs</h1>
+
+	<table class="datatable">
+
+		<thead>
+			<tr>
+				<td>Nom</td>
+				<td>Hôte</td>
+				<td>Nom d'utilisateur</td>
+				<td>Mot de passe</td>
+				<td>Actualisé le</td>
+				<td>Sites</td>
+				<td>Actions</td>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for server in servers %}
+
+				<tr>
+					<td><b>{{ server.name }}</b></td>
+					<td>
+						<span class="copy-on-click" title="cliquez pour copier" data-value="{{ server.host }}">
+							<span class="value">{{ server.host }}</span>
+						</span>
+					</td>
+					<td>
+						<span class="copy-on-click" title="cliquez pour copier" data-value="{{ server.username }}">
+							<span class="value">{{ server.username }}</span>
+						</span>
+					</td>
+					<td>
+						<span class="copy-on-click" title="cliquez pour copier" data-value="{{ server.password }}">
+							<span class="value">{{ server.password }}</span>
+						</span>
+					</td>
+					<td>
+						<a href="{{ path("app_server_parse", { id : server.id }) }}" class="btn btn-outline-primary me-3">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewbox="0 0 16 16">
+								<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+								<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+							</svg>
+						</a>
+						{{ server.updatedAt|date("d/m/Y H:i") }}
+					</td>
+					<td>
+						<a href="{{ path("app_server_read", { id : server.id }) }}" class="btn btn-outline-secondary">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewbox="0 0 16 16">
+								<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
+							</svg>&nbsp; voir
+							{{ server.websites|length }}
+							sites
+						</a>
+					</td>
+					<td>
+						<a href="{{ path("app_server_delete", { id : server.id }) }}" class="btn btn-outline-danger has-modal" data-modal-dialog="Etes vous sur de vouloir supprimer le serveur {{ server.name }} ? Cette action est irréversible.">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewbox="0 0 16 16">
+								<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+							</svg>
+						</a>
+					</td>
+				</tr>
+
+			{% endfor %}
+		</tbody>
+
+	</table>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ServersController!
+{% endblock %}
+
+{% block content %}
+	<h1>Modifier le serveur
+		{{ server.name }}</h1>
+
+	<div class="row mb-3">
+		<div class="col-md-6 py-5">
+			{{ form_start(form) }}
+
+			{{ form_row(form.name) }}
+			{{ form_row(form.host) }}
+			{{ form_row(form.rootDirectory) }}
+			{{ form_row(form.username) }}
+			{{ form_row(form.password) }}
+			<button type="submit" class="btn btn-outline-primary float-end">Enregistrer</button>
+
+			{{ form_end(form) }}
+		</div>
+		<div class="col-md-6">
+			<img src="{{ asset("build/images/server.svg") }}" alt="Serveur" class="w-100">
+		</div>
+	</div>
+
+{% endblock %}
