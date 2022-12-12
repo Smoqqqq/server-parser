@@ -25,7 +25,6 @@ class ServerParser
 
     public function __construct(Server $server, ManagerRegistry $doctrine, WebsiteRepository $websiteRepository)
     {
-
         $this->em = $doctrine->getManager();
         $this->websiteRepository = $websiteRepository;
         $this->server = $server;
@@ -39,6 +38,9 @@ class ServerParser
         $rootPath = $this->server->getRootDirectory();
 
         $files = $this->sftp->nlist($rootPath);
+
+        dd($files);
+
         if (!$files) return "Identifiants et/ou dossier raçine incorrect (impossible de se connecter au serveur)";
 
         $this->sites = array_diff($files, [".", ".."]);

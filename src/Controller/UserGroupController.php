@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\UserGroup;
+use App\Form\UserGroupServerType;
 use App\Form\UserGroupType;
 use App\Repository\ServerRepository;
 use App\Repository\UserGroupRepository;
@@ -83,6 +84,33 @@ class UserGroupController extends AbstractController
         $userGroup = $userGroupRepository->find($id);
 
         return $this->render("user_group/read.html.twig", [
+            "group" => $userGroup
+        ]);
+    }
+
+    /**
+     * @Route("/user/group/{id}/add/server", name="app_user_group_add_server")
+     */
+    public function userGroupAddServer($id, UserGroupRepository $userGroupRepository, Request $request, ServerRepository $serverRepository)
+    {
+        $userGroup = $userGroupRepository->find($id);
+
+        if (in_array("ROLE_SUPER_ADMIN", $this->getUser()->getRoles())) {
+            $servers = $serverRepository->findAll();
+        } else {
+            $servers = $serverRepository->findBy(["createdBy" => $this->getUser()->getId()]);
+        }
+
+        $form = $this->createForm(UserGroupServerType::class, null, ["servers" => $servers]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $servers = $form->getData()["servers"];
+            dd($servers);
+        }
+
+        return $this->render("user_group/add-server.html.twig", [
+            "form" => $form->createView(),
             "group" => $userGroup
         ]);
     }

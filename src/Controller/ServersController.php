@@ -28,6 +28,8 @@ class ServersController extends AbstractController
         $form = $this->createForm(ServerType::class, $server);
         $form->handleRequest($request);
 
+        $server->setCreatedBy($this->getUser());
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $created = $this->getUser()->getServers();

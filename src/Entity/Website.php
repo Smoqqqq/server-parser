@@ -23,7 +23,7 @@ class Website
     private $url;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Server::class, inversedBy="websites")
+     * @ORM\ManyToOne(targetEntity=Server::class, inversedBy="websites", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $server;

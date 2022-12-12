@@ -95,6 +95,15 @@ class WebsiteController extends AbstractController
             }
         }
 
+        $createdServers = $this->getUser()->getServers();
+
+        foreach($createdServers as $server){
+            $websites = $server->getWebsites();
+            foreach($websites as $site){
+                array_push($sites, $site);
+            }
+        }
+
         return $this->render("website/list.html.twig", [
             "websites" => $sites
         ]);

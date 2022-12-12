@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserGroupController!{% endblock %}
+
+{% block content %}
+
+	<div class="row mb-3">
+		<div class="col-md-6 center-y">
+			<h1>Ajouter un/des serveurs au groupe {{ group.name }}</h1>
+			{{ form_start(form) }}
+
+			{{ form_row(form.servers) }}
+
+			<button type="submit" class="btn btn-outline-primary float-end">Ajouter</button>
+
+			{{ form_end(form) }}
+		</div>
+		<div class="col-md-6 center-y">
+			<img src="{{ asset("build/images/user_group.svg") }}" alt="Serveur" class="w-100">
+		</div>
+	</div>
+
+{% endblock %}
