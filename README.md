@@ -1,6 +1,6 @@
 # SERVER PARSER
 
-Une application en Symfony pour stocker un ensemble de serveurs et tracker la position des sites internet qu'il hébergent
+Une application en Symfony pour stocker un ensemble de serveurs et tracker la position des sites internet qu'ils hébergent, avec un système de groupes.
 
 ## Créer un compte utilisateur
 allez sur /register, puis renseignez votre email ainsi que votre mot de passe.
