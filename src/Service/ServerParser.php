@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Server;
 use App\Entity\Website;
 use phpseclib3\Net\SFTP;
+use Doctrine\ORM\EntityManager;
 use App\Repository\WebsiteRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use phpseclib3\Exception\UnableToConnectException;
@@ -12,16 +13,15 @@ use phpseclib3\Exception\UnableToConnectException;
 class ServerParser
 {
 
-    /** @var Array */
-    private $sites;
+    private array $sites;
 
-    /** @var EntityManager */
-    private $em;
+    private EntityManager $em;
 
-    /** @var WebsiteRepository */
-    private $websiteRepository;
+    private WebsiteRepository $websiteRepository;
 
     private $sftp;
+
+    private Server $server;
 
     public function __construct(Server $server, ManagerRegistry $doctrine, WebsiteRepository $websiteRepository)
     {
@@ -33,13 +33,13 @@ class ServerParser
     public function parse()
     {
         $this->sftp = new SFTP($this->server->getHost());
-        $this->sftp->login($this->server->getUsername(), $this->server->getPassword());
+        $loginState = $this->sftp->login($this->server->getUsername(), $this->server->getPassword());
+
+        if(!$loginState) return "Identifiants incorrects.";
 
         $rootPath = $this->server->getRootDirectory();
 
         $files = $this->sftp->nlist($rootPath);
-
-        dd($files);
 
         if (!$files) return "Identifiants et/ou dossier raçine incorrect (impossible de se connecter au serveur)";
 

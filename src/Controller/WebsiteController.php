@@ -16,7 +16,8 @@ class WebsiteController extends AbstractController
     /**
      * @Route("/", name="app_homepage")
      */
-    public function homepage(){
+    public function homepage()
+    {
         return $this->redirectToRoute("app_login");
     }
 
@@ -42,23 +43,23 @@ class WebsiteController extends AbstractController
 
         $createdServers = $user->getServers();
 
-        foreach($createdServers as $server){
+        foreach ($createdServers as $server) {
             array_push($servers, $server);
         }
 
         $form = $this->createForm(WebsiteType::class, $website, ["servers" => $servers]);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            if($website->getServer() == null){
+            if ($website->getServer() == null) {
                 $this->addFlash("danger", "Veuillez ajouter un server.");
                 return $this->redirectToRoute("app_website_create");
             }
 
             $url = $website->getUrl();
 
-            if(count($websiteRepository->findBy(["url" => $url])) > 0){
+            if (count($websiteRepository->findBy(["url" => $url])) > 0) {
                 $this->addFlash("danger", "Le site <b>$url</b> existe déja !");
                 return $this->render("website/create.html.twig", [
                     "form" => $form->createView()
@@ -81,15 +82,16 @@ class WebsiteController extends AbstractController
     /**
      * @Route("/websites", name="app_websites")
      */
-    public function websites(){
+    public function websites()
+    {
         $groups = $this->getUser()->getUserGroups();
 
         $sites = [];
 
-        foreach($groups as $group){
+        foreach ($groups as $group) {
             $groupServers = $group->getServers();
-            foreach($groupServers as $server){
-                foreach($server->getWebsites() as $site){
+            foreach ($groupServers as $server) {
+                foreach ($server->getWebsites() as $site) {
                     array_push($sites, $site);
                 }
             }
@@ -97,10 +99,12 @@ class WebsiteController extends AbstractController
 
         $createdServers = $this->getUser()->getServers();
 
-        foreach($createdServers as $server){
+        foreach ($createdServers as $server) {
             $websites = $server->getWebsites();
-            foreach($websites as $site){
-                array_push($sites, $site);
+            foreach ($websites as $site) {
+                if (!in_array($site, $sites)) {
+                    array_push($sites, $site);
+                }
             }
         }
 

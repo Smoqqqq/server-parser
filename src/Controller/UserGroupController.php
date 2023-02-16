@@ -2,17 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\UserGroup;
-use App\Form\UserGroupServerType;
 use App\Form\UserGroupType;
+use App\Form\UserGroupServerType;
+use App\Repository\UserRepository;
 use App\Repository\ServerRepository;
 use App\Repository\UserGroupRepository;
-use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UserGroupController extends AbstractController
 {
@@ -21,23 +22,29 @@ class UserGroupController extends AbstractController
      */
     public function createUserGroup(Request $request, ManagerRegistry $doctrine, ServerRepository $serverRepository, UserRepository $userRepository): Response
     {
+        /** @var User */
+        $user = $this->getUser();
+        $users = $userRepository->findAllButCurrent($user->getEmail());
 
-        $users = $userRepository->findAllButCurrent($this->getUser()->getEmail());
-
-        if (in_array("ROLE_SUPER_ADMIN", $this->getUser()->getRoles())) {
+        if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
             $servers = $serverRepository->findAll();
         } else {
-            $servers = $serverRepository->findBy(["createdBy" => $this->getUser()->getId()]);
+            $servers = $serverRepository->findBy(["createdBy" => $user->getId()]);
         }
 
         $userGroup = new UserGroup();
         $form = $this->createForm(UserGroupType::class, $userGroup, ["servers" => $servers, "users" => $users]);
         $form->handleRequest($request);
+        $userGroup->addUser($user);
+        $userGroup->setCreatedBy($user);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $doctrine->getManager();
             $em->persist($userGroup);
             $em->flush();
+
+            $this->addFlash("success", "Groupe " . $userGroup->getName() . " ajouté !");
+            return $this->redirectToRoute("app_user_group_read", ["id" => $userGroup->getId()]);
         }
 
         return $this->render('user_group/create.html.twig', [
@@ -48,18 +55,23 @@ class UserGroupController extends AbstractController
     /**
      * @Route("/user/group/{id}/edit", name="app_user_group_edit")
      */
-    public function editUserGroup($id, Request $request, ManagerRegistry $doctrine, UserGroupRepository $userGroupRepository, ServerRepository $serverRepository): Response
+    public function editUserGroup($id, Request $request, ManagerRegistry $doctrine, UserGroupRepository $userGroupRepository, ServerRepository $serverRepository, UserRepository $userRepository): Response
     {
         $userGroup = $userGroupRepository->find($id);
+        /** @var User */
+        $user = $this->getUser();
 
-        if (in_array("ROLE_SUPER_ADMIN", $this->getUser()->getRoles())) {
+        if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
             $servers = $serverRepository->findAll();
         } else {
-            $servers = $serverRepository->findBy(["createdBy" => $this->getUser()->getId()]);
+            $servers = $serverRepository->findBy(["createdBy" => $user->getId()]);
         }
 
-        $form = $this->createForm(UserGroupType::class, $userGroup, ["servers" => $servers]);
+        $users = $userRepository->findAllButCurrent($user->getEmail());
+
+        $form = $this->createForm(UserGroupType::class, $userGroup, ["servers" => $servers, "users" => $users]);
         $form->handleRequest($request);
+        $userGroup->addUser($user);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $doctrine->getManager();
@@ -95,10 +107,13 @@ class UserGroupController extends AbstractController
     {
         $userGroup = $userGroupRepository->find($id);
 
-        if (in_array("ROLE_SUPER_ADMIN", $this->getUser()->getRoles())) {
+        /** @var User */
+        $user = $this->getUser();
+
+        if (in_array("ROLE_SUPER_ADMIN", $user->getRoles())) {
             $servers = $serverRepository->findAll();
         } else {
-            $servers = $serverRepository->findBy(["createdBy" => $this->getUser()->getId()]);
+            $servers = $serverRepository->findBy(["createdBy" => $user->getId()]);
         }
 
         $form = $this->createForm(UserGroupServerType::class, null, ["servers" => $servers]);

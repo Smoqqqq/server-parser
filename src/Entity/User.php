@@ -54,11 +54,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $servers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserGroup::class, mappedBy="createdBy")
+     */
+    private $createdUserGroups;
+
     public function __construct()
     {
         $this->userGroups = new ArrayCollection();
         $this->websites = new ArrayCollection();
         $this->servers = new ArrayCollection();
+        $this->createdUserGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +215,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($server->getCreatedBy() === $this) {
                 $server->setCreatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserGroup>
+     */
+    public function getCreatedUserGroups(): Collection
+    {
+        return $this->createdUserGroups;
+    }
+
+    public function addCreatedUserGroup(UserGroup $createdUserGroup): self
+    {
+        if (!$this->createdUserGroups->contains($createdUserGroup)) {
+            $this->createdUserGroups[] = $createdUserGroup;
+            $createdUserGroup->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedUserGroup(UserGroup $createdUserGroup): self
+    {
+        if ($this->createdUserGroups->removeElement($createdUserGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($createdUserGroup->getCreatedBy() === $this) {
+                $createdUserGroup->setCreatedBy(null);
             }
         }
 

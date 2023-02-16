@@ -16,9 +16,16 @@
 				{{ form_row(form.email) }}
 				{{ form_row(form.password) }}
 
-				<button class="btn btn-primary float-end mt-4" type="submit">
-					S'inscrire
-				</button>
+				<div class="row mt-4">
+					<div class="col-md-6">
+						<a href="{{ path("app_login") }}" class="text-secondary">J'ai déja un compte</a>
+					</div>
+					<div class="col-md-6">
+						<button class="btn btn-primary float-end" type="submit">
+							S'inscrire
+						</button>
+					</div>
+				</div>
 
 				{{ form_end(form) }}
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Throwable;
+use App\Entity\User;
 use App\Entity\Server;
 use App\Form\ServerType;
 use App\Service\ServerParser;
@@ -31,8 +32,9 @@ class ServersController extends AbstractController
         $server->setCreatedBy($this->getUser());
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $created = $this->getUser()->getServers();
+            /** @var User */
+            $user = $this->getUser();
+            $created = $user->getServers();
 
             $exists = false;
 
@@ -106,6 +108,7 @@ class ServersController extends AbstractController
      */
     public function readServers(): Response
     {
+        /** @var User */
         $user = $this->getUser();
 
         $groups = $user->getUserGroups();
@@ -122,7 +125,9 @@ class ServersController extends AbstractController
         $createdServers = $user->getServers();
 
         foreach ($createdServers as $server) {
-            array_push($servers, $server);
+            if (!in_array($server, $servers)) {
+                array_push($servers, $server);
+            }
         }
 
         return $this->render("servers/list.html.twig", [
@@ -154,9 +159,14 @@ class ServersController extends AbstractController
         $em->persist($server);
         $em->flush();
 
-        new ServerParser($server, $doctrine, $websiteRepository);
-
-        $this->addFlash("success", "Sites du serveur mis à jour !");
+        // Parses the server
+        $parser = new ServerParser($server, $doctrine, $websiteRepository);
+        $state = $parser->parse();
+        if ($state) {
+            $this->addFlash("warning", $state);
+        } else {
+            $this->addFlash("success", "Sites du serveur mis à jour !");
+        }
         $referer = $request->headers->get('referer');
         return new RedirectResponse($referer);
     }
@@ -164,15 +174,26 @@ class ServersController extends AbstractController
     /**
      * @Route("/servers/parse", name="app_servers_parse")
      */
-    public function parseAllServers(ServerRepository $serverRepository, ManagerRegistry $doctrine, WebsiteRepository $websiteRepository)
+    public function parseAllServers(ServerRepository $serverRepository, ManagerRegistry $doctrine, WebsiteRepository $websiteRepository, Request $request)
     {
-        $servers = $serverRepository->findAllServersNotUpdated($this->getUser()->getEmail());
+        /** @var User */
+        $user = $this->getUser();
+        $servers = $serverRepository->findAllServersNotUpdated($user->getEmail());
 
         foreach ($servers as $server) {
-            new ServerParser($server, $doctrine, $websiteRepository);
+            // Parses the server
+            $parser = new ServerParser($server, $doctrine, $websiteRepository);
+            $state = $parser->parse();
+            if ($state) {
+                $this->addFlash("warning", $state);
+                $referer = $request->headers->get('referer');
+                return new RedirectResponse($referer);
+            }
         }
 
-        $this->addFlash("success", "Sites du serveur mis à jour !");
+        $this->addFlash("success", "Sites des serveur mis à jour !");
+        $referer = $request->headers->get('referer');
+        return new RedirectResponse($referer);
     }
 
     /**

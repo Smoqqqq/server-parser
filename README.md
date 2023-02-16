@@ -3,7 +3,7 @@
 Une application en Symfony pour stocker un ensemble de serveurs et tracker la position des sites internet qu'ils hébergent, avec un système de groupes.
 
 ## Créer un compte utilisateur
-allez sur /register, puis renseignez votre email ainsi que votre mot de passe.
+Lors de votre première connexion, ou si vous êtes déconnectés, vous serez envoyés vers la page de connexion. CLiquez alors sur le bouton S'inscrire Cliquez alors votre email ainsi que votre mot de passe.
 Validez ; le tour est joué !
 
 vous pouvez désormais vous connecter sur la page /login.

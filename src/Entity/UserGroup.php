@@ -34,6 +34,11 @@ class UserGroup
      */
     private $users;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="createdUserGroups")
+     */
+    private $createdBy;
+
     public function __construct()
     {
         $this->servers = new ArrayCollection();
@@ -101,6 +106,18 @@ class UserGroup
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
